@@ -70,7 +70,7 @@ jobs:
           cnt=0
           for i in $(ls -1 s3s/exports/coop_results)
           do
-          if [$cnt -eq 0]; then
+          if [$cnt == "0"]; then
             echo $i
             echo $cnt
             cnt=1
