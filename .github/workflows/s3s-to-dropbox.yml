@@ -70,14 +70,15 @@ jobs:
           cnt=0
           for i in $(ls -1 s3s/exports/coop_results)
           do
-          if cnt -eq 0
+          if [$cnt -eq 0]
             echo $i
             echo $cnt
             cnt=1
           else
-          echo ↓curl
-          echo $cnt
-          curl -X POST https://content.dropboxapi.com/2/files/upload \
+            echo ↓curl
+            echo $i
+            echo $cnt
+            curl -X POST https://content.dropboxapi.com/2/files/upload \
             --header "Authorization: Bearer ${{ env.DTOKEN }}" \
             --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/test/$i\"}" \
             --header  "Content-Type: application/octet-stream" \
