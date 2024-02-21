@@ -18,8 +18,9 @@ jobs:
       BULLETTOKEN: ${{ secrets.BULLETTOKEN }}
       SESSION_TOKEN: ${{ secrets.SESSION_TOKEN }}
       F_GEN: ${{ secrets.F_GEN }}
-
+      
     name: Get DropBox Token
+    steps:
       - uses: actions/checkout@v3
       run: |
       echo "DTOKEN=$(curl https://api.dropbox.com/oauth2/token \
