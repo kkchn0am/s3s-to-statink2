@@ -36,7 +36,7 @@ jobs:
           repository: 'kkchn0am/s3s-to-statink2'
           
       - name: Splatoon3 Send DropBox
-        working-directory: /
+        working-directory: s3s-to-statink2
         run: |
           echo test
           echo "${{ env.DTOKEN }}"
