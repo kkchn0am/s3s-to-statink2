@@ -4,7 +4,10 @@ on:
   schedule:
     - cron: '0 0-23/3 * * *'
   workflow_dispatch:
-
+  
+permissions:
+  contents: write
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,6 +21,14 @@ jobs:
 
     name: Splatoon3 Battlelog Uploader
     steps:
+      - name: Commit & Push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "Botによるコミット"
+          git push origin main
+          
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
