@@ -47,6 +47,6 @@ jobs:
           ls -l
           curl -X POST https://content.dropboxapi.com/2/files/upload \
             --header "Authorization: Bearer ${{ env.DTOKEN }}" \
-            --header "Dropbox-API-Arg: {\"path\":\"log.txt\"}" \
+            --header "Dropbox-API-Arg: {\"path\":\"*.txt\"}" \
             --header  "Content-Type: application/octet-stream" \
             --data-binary @/home/runner/work/s3s-to-statink2/s3s-to-statink2/log.txt
