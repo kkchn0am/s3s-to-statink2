@@ -1,0 +1,39 @@
+name: Splatoon3 Send DropBox
+
+on:
+  schedule:
+    - cron: '0 0-23/3 * * *'
+  workflow_dispatch:
+  
+permissions:
+  contents: write
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
+      ACC_LOC: ${{ secrets.ACC_LOC }}
+      GTOKEN: ${{ secrets.GTOKEN }}
+      BULLETTOKEN: ${{ secrets.BULLETTOKEN }}
+      SESSION_TOKEN: ${{ secrets.SESSION_TOKEN }}
+      F_GEN: ${{ secrets.F_GEN }}
+
+    name: Get DropBox Token
+      - uses: actions/checkout@v3
+      run: |
+      echo "DTOKEN=$(curl https://api.dropbox.com/oauth2/token \
+        -d grant_type=refresh_token \
+        -d refresh_token=$REFRESH_TOKEN \
+        -u $APP_KEY:$APP_SECRET$
+        | jq -r ".access_token")" >> $GITHUB_ENV
+      echo { env.DTOKEN }
+      
+    name: Splatoon3 Send DropBox
+      - uses: actions/checkout@v3
+      run: |
+      curl -X POST -f -H "Authorization: Bearer ${DROPBOX_TOKEN}" \
+    -D - -H "Dropbox-API-Arg: {\"path\": \"/log.txt\",\"mode\": \"overwrite\",\"mute\": false}" \
+    -H "Content-Type: application/octet-stream" \
+    --data-binary @target/log.txt \
+    https://content.dropboxapi.com/2/files/upload
