@@ -30,7 +30,6 @@ jobs:
           -d refresh_token="${{ env.REFRESH_TOKEN }}" \
           -u ${{ env.D_API_KEY }}:${{ env.D_APP_SECRET }} | jq -r ".access_token")
           echo "DTOKEN=$DTOKEN" >> $GITHUB_ENV
-          echo "${{ env.DTOKEN }}"
 
 # echo "::add-mask::$DTOKEN"
 # echo "DTOKEN=$DTOKEN" >> "$GITHUB_OUTPUT"
@@ -43,11 +42,10 @@ jobs:
       - name: Splatoon3 Send DropBox
         run: |
           echo test
-          echo "${{ env.DTOKEN }}"
-          echo test
+          echo ${{ env.DTOKEN }}
           pwd
           ls -l
-          curl -X POST -f -H "Authorization: Bearer ${{ env.DTOKEN }}" \
+          curl -X POST -f -H "Authorization: Bearer \"${{ env.DTOKEN }}\"" \
           -D - -H "Dropbox-API-Arg: {\"path\": \"log.txt\",\"mode\": \"overwrite\",\"mute\": false}" \
           -H "Content-Type: application/octet-stream" \
           --data-binary @/home/runner/work/s3s-to-statink2/s3s-to-statink2/log.txt \
