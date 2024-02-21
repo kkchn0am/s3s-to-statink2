@@ -18,23 +18,27 @@ jobs:
       BULLETTOKEN: ${{ secrets.BULLETTOKEN }}
       SESSION_TOKEN: ${{ secrets.SESSION_TOKEN }}
       F_GEN: ${{ secrets.F_GEN }}
+      D_API_KEY: ${{ secrets.D_API_KEY }}
+      D_APP_SECRET: ${{ secrets.APP_SECRET }}
+      REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
       
-    name: Get DropBox Token
-    steps:
-      - uses: actions/checkout@v3
+  name: Splatoon3 Send DropBox
+  steps:
+    - uses: actions/checkout@v3
+    - name: Get DropBox Token
       run: |
-      echo "DTOKEN=$(curl https://api.dropbox.com/oauth2/token \
+        echo "DTOKEN=$(curl https://api.dropbox.com/oauth2/token \
         -d grant_type=refresh_token \
         -d refresh_token=$REFRESH_TOKEN \
-        -u $APP_KEY:$APP_SECRET$
+        -u $D_API_KEY:$D_APP_SECRET$
         | jq -r ".access_token")" >> $GITHUB_ENV
-      echo { env.DTOKEN }
+        echo ${{ env.DTOKEN }}
       
-    name: Splatoon3 Send DropBox
-      - uses: actions/checkout@v3
+    - name: Splatoon3 Send DropBox
+    - uses: actions/checkout@v3
       run: |
-      curl -X POST -f -H "Authorization: Bearer ${DROPBOX_TOKEN}" \
-    -D - -H "Dropbox-API-Arg: {\"path\": \"/log.txt\",\"mode\": \"overwrite\",\"mute\": false}" \
-    -H "Content-Type: application/octet-stream" \
-    --data-binary @target/log.txt \
-    https://content.dropboxapi.com/2/files/upload
+        curl -X POST -f -H "Authorization: Bearer ${{ env.DTOKEN }}" \
+        -D - -H "Dropbox-API-Arg: {\"path\": \"/log.txt\",\"mode\": \"overwrite\",\"mute\": false}" \
+        -H "Content-Type: application/octet-stream" \
+        --data-binary @target/log.txt \
+        https://content.dropboxapi.com/2/files/upload
