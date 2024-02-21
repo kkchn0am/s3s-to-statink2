@@ -49,4 +49,4 @@ jobs:
             --header "Authorization: Bearer ${{ env.DTOKEN }}" \
             --header "Dropbox-API-Arg: {\"path\":\"log.txt\"}" \
             --header  "Content-Type: application/octet-stream" \
-            --data-binary @log.txt
+            --data-binary @/home/runner/work/s3s-to-statink2/s3s-to-statink2/log.txt
