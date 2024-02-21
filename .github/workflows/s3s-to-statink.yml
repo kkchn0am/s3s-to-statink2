@@ -26,7 +26,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          echo -e echo "CURRENT_DATETIME=$(date +'%Y-%m-%d %H:%M:%S')" >> log.txt
+          echo -e $(date +'%Y-%m-%d %H:%M:%S') >> log.txt
           git add log.txt
           git commit -m "Botによるコミット"
           git push origin main
