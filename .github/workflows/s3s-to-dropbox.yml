@@ -68,7 +68,8 @@ jobs:
         run: |
           echo test
           pwd
-          ls -1R s3s/exports
+          ls -1 s3s/exports/coop_results
+          ls -F s3s/exports/coop_results | grep -v / | sed s/\*$//g
           for 
           curl -X POST https://content.dropboxapi.com/2/files/upload \
             --header "Authorization: Bearer ${{ env.DTOKEN }}" \
