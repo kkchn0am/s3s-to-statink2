@@ -45,8 +45,8 @@ jobs:
           echo ${{ env.DTOKEN }}
           pwd
           ls -l
-          curl -X POST -f -H \"Authorization: Bearer ${{ env.DTOKEN }}\" \
-          -D - -H "Dropbox-API-Arg: {\"path\": \"log.txt\",\"mode\": \"overwrite\",\"mute\": false}" \
-          -H "Content-Type: application/octet-stream" \
-          --data-binary @/home/runner/work/s3s-to-statink2/s3s-to-statink2/log.txt \
-          https://content.dropboxapi.com/2/files/upload
+          curl -X POST https://content.dropboxapi.com/2/files/upload \
+            --header "Authorization: Bearer ${{ env.DTOKEN }}" \
+            --header "Dropbox-API-Arg: {\"path\":\"log.txt\"}" \
+            --header  "Content-Type: application/octet-stream" \
+            --data-binary @log.txt
