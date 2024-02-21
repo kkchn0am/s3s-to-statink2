@@ -81,14 +81,14 @@ jobs:
           
           for i in $(ls -1 s3s/exports/results)
           do
-            cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode"
-            if [ $(cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode") = "BANKARA" ] ; then
+            cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode"
+            if [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode") = "BANKARA" ] ; then
               mv s3s/exports/results/$i s3s/exports/results/vs_bankara
-            elif [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "LEAGUE" ] ; then
+            elif [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode")  = "LEAGUE" ] ; then
               mv s3s/exports/results/$i s3s/exports/results/vs_event
-            elif [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "PRIVATE" ] ; then
+            elif [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode")  = "PRIVATE" ] ; then
               mv s3s/exports/results/$i s3s/exports/results/vs_private
-            elif [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "XMATCH" ] ; then
+            elif [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode")  = "XMATCH" ] ; then
               mv s3s/exports/results/$i s3s/exports/results/vs_xmatch
             else
               mv s3s/exports/results/$i s3s/exports/results/vs_regular
