@@ -29,6 +29,7 @@ jobs:
           -d grant_type=refresh_token \
           -d refresh_token="${{ env.REFRESH_TOKEN }}" \
           -u ${{ env.D_API_KEY }}:${{ env.D_APP_SECRET }} | jq -r ".access_token")
+          echo "::add-mask::$DTOKEN"
           echo "DTOKEN=$DTOKEN" >> $GITHUB_ENV
 
 # echo "::add-mask::$DTOKEN"
@@ -67,7 +68,7 @@ jobs:
       - name: Splatoon3 Send DropBox
         run: |
           echo ↓fortest
-          cnt=0
+          echo "cnt=0"
           for i in $(ls -1 s3s/exports/coop_results)
           do
           if [${cnt} == "0"]; then
