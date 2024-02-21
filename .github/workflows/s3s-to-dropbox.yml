@@ -31,11 +31,11 @@ jobs:
           -d grant_type=refresh_token \
           -d refresh_token=\$REFRESH_TOKEN \
           -u \$D_API_KEY:\$D_APP_SECRET | jq -r \".access_token\")" >> $GITHUB_ENV
-          echo test
-          echo "${{ env.DTOKEN }}"
       
       - name: Splatoon3 Send DropBox
         run: |
+          echo test
+          echo "${{ env.DTOKEN }}"
           ls -lR
           curl -X POST -f -H "Authorization: Bearer ${{ env.DTOKEN }}" \
           -D - -H "Dropbox-API-Arg: {\"path\": \"/log.txt\",\"mode\": \"overwrite\",\"mute\": false}" \
