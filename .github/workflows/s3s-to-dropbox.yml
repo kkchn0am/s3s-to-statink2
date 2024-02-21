@@ -32,9 +32,6 @@ jobs:
           echo "::add-mask::$DTOKEN"
           echo "DTOKEN=$DTOKEN" >> $GITHUB_ENV
 
-# echo "::add-mask::$DTOKEN"
-# echo "DTOKEN=$DTOKEN" >> "$GITHUB_OUTPUT"
-
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
@@ -59,30 +56,25 @@ jobs:
         working-directory: s3s
         run: |
           python3 s3s.py -o
-
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#        with:
-#          repository: 'kkchn0am/s3s-to-statink2'
           
       - name: Splatoon3 Send DropBox
         run: |
           echo ↓fortest
-          echo "cnt=0"
+          cnt=0
           for i in $(ls -1 s3s/exports/coop_results)
           do
-          if [${cnt} == "0"]; then
-            echo $i
-            echo $cnt
-            cnt=1
-          else
-            echo ↓curl
-            echo $i
-            echo $cnt
-            curl -X POST https://content.dropboxapi.com/2/files/upload \
-            --header "Authorization: Bearer ${{ env.DTOKEN }}" \
-            --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/test/$i\"}" \
-            --header  "Content-Type: application/octet-stream" \
-            --data-binary @s3s/exports/coop_results/$i
-          fi
+            if [ ${cnt} == "0" ] ; then
+              echo $i
+              echo $cnt
+              echo "cnt=1"
+            else
+              echo ↓curl
+              echo $i
+              echo $cnt
+              curl -X POST https://content.dropboxapi.com/2/files/upload \
+                --header "Authorization: Bearer ${{ env.DTOKEN }}" \
+                --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/test/$i\"}" \
+                --header  "Content-Type: application/octet-stream" \
+                --data-binary @s3s/exports/coop_results/$i
+            fi
           done
