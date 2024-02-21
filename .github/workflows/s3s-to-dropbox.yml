@@ -58,8 +58,30 @@ jobs:
         working-directory: s3s
         run: |
           python3 s3s.py -o
-          
-      - name: Splatoon3 Send DropBox
+
+      - name: battle_results Send to DropBox
+        run: |
+          echo ↓fortest
+          cnt="0"
+          for i in $(ls -1 s3s/exports/results)
+          do
+            if [ ${cnt} = "0" ] ; then
+              echo $i
+              echo $cnt
+              cnt="1"
+            else
+              echo ↓curl
+              echo $i
+              echo $cnt
+              curl -X POST https://content.dropboxapi.com/2/files/upload \
+                --header "Authorization: Bearer ${{ env.DTOKEN }}" \
+                --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/test2/$i\"}" \
+                --header  "Content-Type: application/octet-stream" \
+                --data-binary @s3s/exports/results/$i
+            fi
+          done
+
+      - name: coop_results Send to DropBox
         run: |
           echo ↓fortest
           cnt="0"
@@ -75,7 +97,7 @@ jobs:
               echo $cnt
               curl -X POST https://content.dropboxapi.com/2/files/upload \
                 --header "Authorization: Bearer ${{ env.DTOKEN }}" \
-                --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/test/$i\"}" \
+                --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/coop_results/$i\"}" \
                 --header  "Content-Type: application/octet-stream" \
                 --data-binary @s3s/exports/coop_results/$i
             fi
