@@ -67,11 +67,13 @@ jobs:
           mkdir vs_regular
           mkdir vs_xmatch
           ls
-#          for i in $(ls -1 s3s/exports/results)
-#          do
-#            if [ cat $i | jq -r  = "0" ] ; then
-#            fi
-#          done
+          for i in $(ls -1 s3s/exports/results)
+          do
+            if [ cat $i | jq -r .data.vsHistoryDetail.vsMode.mode = "BANKARA" ] ; then
+              mv s3s/exports/results/$i vs_bankara
+            fi
+          done
+          ls vs_bankara
           
       - name: battle_results Send to DropBox
         run: |
