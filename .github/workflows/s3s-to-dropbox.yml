@@ -72,43 +72,48 @@ jobs:
 
       - name: CreateFolder and Move battle_results
         run: |
-          mkdir vs_bankara
-          mkdir vs_event
-          mkdir vs_private
-          mkdir vs_regular
-          mkdir vs_xmatch
-          ls
+          mkdir s3s/exports/results/vs_bankara
+          mkdir s3s/exports/results/vs_event
+          mkdir s3s/exports/results/vs_private
+          mkdir s3s/exports/results/vs_xmatch
+          mkdir s3s/exports/results/vs_regular
+
+          
           for i in $(ls -1 s3s/exports/results)
           do
-            if [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "BANKARA" ] ; then
-              mv s3s/exports/results/$i vs_bankara
+            cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode"
+            if [ $(cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode") = "BANKARA" ] ; then
+              mv s3s/exports/results/$i s3s/exports/results/vs_bankara
             elif [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "LEAGUE" ] ; then
-              mv s3s/exports/results/$i vs_event
+              mv s3s/exports/results/$i s3s/exports/results/vs_event
             elif [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "PRIVATE" ] ; then
-              mv s3s/exports/results/$i vs_private
+              mv s3s/exports/results/$i s3s/exports/results/vs_private
             elif [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "XMATCH" ] ; then
-              mv s3s/exports/results/$i vs_xmatch
+              mv s3s/exports/results/$i s3s/exports/results/vs_xmatch
             else
-              mv s3s/exports/results/$i vs_regular
+              mv s3s/exports/results/$i s3s/exports/results/vs_regular
             fi
           done
-          ls vs_bankara
-          ls vs_private
+          ls s3s/exports/results/vs_bankara
+          ls s3s/exports/results/vs_private
           
       - name: battle_results Send to DropBox
         run: |
-          cnt="0"
-          for i in $(ls -1 s3s/exports/results/)
+          for f in vs_bankara vs_event vs_private vs_xmatch vs_regular
           do
-            if [ ${cnt} = "0" ] ; then
-              cnt="1"
-            else
-              curl -X POST https://content.dropboxapi.com/2/files/upload \
-                --header "Authorization: Bearer ${{ env.DTOKEN }}" \
-                --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/test2/$i\",\"mode\":\"overwrite\"}" \
-                --header  "Content-Type: application/octet-stream" \
-                --data-binary @s3s/exports/results/$i
-            fi
+            cnt="0"
+            for i in $(ls -1 s3s/exports/results/$f)
+            do
+              if [ ${cnt} = "0" ] ; then
+                cnt="1"
+              else
+                curl -X POST https://content.dropboxapi.com/2/files/upload \
+                  --header "Authorization: Bearer ${{ env.DTOKEN }}" \
+                  --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/test2/$i\",\"mode\":\"overwrite\"}" \
+                  --header  "Content-Type: application/octet-stream" \
+                  --data-binary @s3s/exports/results/$f/$i
+              fi
+            done
           done
           
       - name: coop_results Send to DropBox
