@@ -69,8 +69,8 @@ jobs:
           echo test
           pwd
           ls -lR s3s/exports
-#          curl -X POST https://content.dropboxapi.com/2/files/upload \
-#            --header "Authorization: Bearer ${{ env.DTOKEN }}" \
-#            --header "Dropbox-API-Arg: {\"path\":\"/log.txt\"}" \
-#            --header  "Content-Type: application/octet-stream" \
-#            --data-binary @/home/runner/work/s3s-to-statink2/s3s-to-statink2/log.txt
+          curl -X POST https://content.dropboxapi.com/2/files/upload \
+            --header "Authorization: Bearer ${{ env.DTOKEN }}" \
+            --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/20240211T045552Z.json\"}" \
+            --header  "Content-Type: application/octet-stream" \
+            --data-binary @s3s/exports/coop_results/20240211T045552Z.json
