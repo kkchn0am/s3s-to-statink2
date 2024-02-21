@@ -30,7 +30,8 @@ jobs:
           echo "DTOKEN=$(curl https://api.dropbox.com/oauth2/token \
           -d grant_type=refresh_token \
           -d refresh_token=$REFRESH_TOKEN \
-          -u $D_API_KEY:$D_APP_SECRET | jq -r \".access_token \")" >> $GITHUB_ENV
+          -u $D_API_KEY:$D_APP_SECRET$ | jq -r \".access_token \")" >> $GITHUB_ENV
+          echo test
           echo ${{ env.DTOKEN }}
       
       - name: Splatoon3 Send DropBox
@@ -38,5 +39,5 @@ jobs:
           curl -X POST -f -H "Authorization: Bearer ${{ env.DTOKEN }}" \
           -D - -H "Dropbox-API-Arg: {\"path\": \"/log.txt\",\"mode\": \"overwrite\",\"mute\": false}" \
           -H "Content-Type: application/octet-stream" \
-          --data-binary @target/log.txt \
+          --data-binary @/log.txt \
           https://content.dropboxapi.com/2/files/upload
