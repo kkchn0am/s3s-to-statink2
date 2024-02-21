@@ -59,6 +59,17 @@ jobs:
         run: |
           python3 s3s.py -o
 
+      - name: Masking results FileName
+        run: |
+          for i in $(ls -1 s3s/exports/coop_results)
+          do
+            echo "::add-mask::$i"
+          done
+#          for i in $(ls -1 s3s/exports/results)
+#          do
+#            echo "::add-mask::$i"
+#          done
+
       - name: CreateFolder and Move battle_results
         run: |
           mkdir vs_bankara
@@ -69,16 +80,25 @@ jobs:
           ls
           for i in $(ls -1 s3s/exports/results)
           do
-            if [ cat $i | jq -r .data.vsHistoryDetail.vsMode.mode = "BANKARA" ] ; then
+            if [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "BANKARA" ] ; then
               mv s3s/exports/results/$i vs_bankara
+            elif [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "LEAGUE" ] ; then
+              mv s3s/exports/results/$i vs_event
+            elif [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "PRIVATE" ] ; then
+              mv s3s/exports/results/$i vs_private
+            elif [ cat $i | jq -r ".data.vsHistoryDetail.vsMode.mode" = "XMATCH" ] ; then
+              mv s3s/exports/results/$i vs_xmatch
+            else
+              mv s3s/exports/results/$i vs_regular
             fi
           done
           ls vs_bankara
+          ls vs_private
           
       - name: battle_results Send to DropBox
         run: |
           cnt="0"
-          for i in $(ls -1 s3s/exports/results)
+          for i in $(ls -1 s3s/exports/results/)
           do
             if [ ${cnt} = "0" ] ; then
               cnt="1"
@@ -89,13 +109,6 @@ jobs:
                 --header  "Content-Type: application/octet-stream" \
                 --data-binary @s3s/exports/results/$i
             fi
-          done
-
-      - name: Masking FileName
-        run: |
-          for i in $(ls -1 s3s/exports/coop_results)
-          do
-            echo "::add-mask::$i"
           done
           
       - name: coop_results Send to DropBox
