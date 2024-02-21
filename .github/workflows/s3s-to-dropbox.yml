@@ -67,9 +67,8 @@ jobs:
       - name: Splatoon3 Send DropBox
         run: |
           echo test
-          echo ${{ env.DTOKEN }}
           pwd
-          ls -l
+          ls -lR s3s/exports
 #          curl -X POST https://content.dropboxapi.com/2/files/upload \
 #            --header "Authorization: Bearer ${{ env.DTOKEN }}" \
 #            --header "Dropbox-API-Arg: {\"path\":\"/log.txt\"}" \
