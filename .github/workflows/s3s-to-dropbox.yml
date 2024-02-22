@@ -39,7 +39,7 @@ jobs:
           python-version: 3.11
 
       - name: Checkout frozenpandaman/s3s
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: 'frozenpandaman/s3s'
           path: s3s
@@ -60,7 +60,7 @@ jobs:
 
       - name: Masking results FileName
         run: |
-          for i in $(ls -1 s3s/exports/coop_results)
+          for i in $(ls -1 s3s/exports/coop_results | grep -v /)
           do
             echo "::add-mask::$i"
           done
@@ -77,23 +77,20 @@ jobs:
           mkdir s3s/exports/results/vs_xmatch
           mkdir s3s/exports/results/vs_regular
 
-          for i in $(ls -1 s3s/exports/results)
+          for i in $(ls -1 s3s/exports/results | grep -v /)
           do
             if [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode") = "BANKARA" ] ; then
               mv s3s/exports/results/$i s3s/exports/results/vs_bankara
+            elif [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode")  = "LEAGUE" ] ; then
+              mv s3s/exports/results/$i s3s/exports/results/vs_event
+            elif [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode")  = "PRIVATE" ] ; then
+              mv s3s/exports/results/$i s3s/exports/results/vs_private
+            elif [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode")  = "XMATCH" ] ; then
+              mv s3s/exports/results/$i s3s/exports/results/vs_xmatch
+            else
+              mv s3s/exports/results/$i s3s/exports/results/vs_regular
             fi
           done
-          echo "↓ls"
-          ls s3s/exports/results/vs_bankara
-#            elif [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode")  = "LEAGUE" ] ; then
-#              mv s3s/exports/results/$i s3s/exports/results/vs_event
-#            elif [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode")  = "PRIVATE" ] ; then
-#              mv s3s/exports/results/$i s3s/exports/results/vs_private
-#            elif [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode")  = "XMATCH" ] ; then
-#              mv s3s/exports/results/$i s3s/exports/results/vs_xmatch
-#            else
-#              mv s3s/exports/results/$i s3s/exports/results/vs_regular
-#          ls s3s/exports/results/vs_private
           
       - name: battle_results Send to DropBox
         run: |
@@ -117,7 +114,7 @@ jobs:
       - name: coop_results Send to DropBox
         run: |
           cnt="0"
-          for i in $(ls -1 s3s/exports/coop_results)
+          for i in $(ls -1 s3s/exports/coop_results | grep -v /)
           do
             if [ ${cnt} = "0" ] ; then
               cnt="1"
