@@ -49,22 +49,24 @@ jobs:
         run: |
           echo '{"api_key": "${{ env.API_KEY }}", "acc_loc": "${{ env.ACC_LOC }}", "gtoken": "${{ env.GTOKEN }}", "bullettoken": "${{ env.BULLETTOKEN }}", "session_token": "${{ env.SESSION_TOKEN }}", "f_gen": "${{ env.F_GEN }}" }' > config.txt
           cat config.txt
+          
       - name: Install s3s requirements
         working-directory: s3s
         run: |
           pip install -r requirements.txt
+          
       - name: Run s3s
         working-directory: s3s
         run: |
           python3 s3s.py -o
 
-      - name: Masking results FileName
+      - name: Masking FileName
         run: |
           for i in $(ls -F1 s3s/exports/coop_results | grep -v /)
           do
             echo "::add-mask::$i"
           done
-#          for i in $(ls -1 s3s/exports/results)
+#          for i in $(ls -F1 s3s/exports/results | grep -v /)
 #          do
 #            echo "::add-mask::$i"
 #          done
@@ -95,7 +97,7 @@ jobs:
           
       - name: battle_results Send to DropBox
         run: |
-          for f in vs_bankara vs_event vs_private vs_xmatch vs_regular
+          for f in vs_regular
           do
             cnt="0"
             for i in $(ls -F1 s3s/exports/results/$f | grep -v /)
@@ -103,7 +105,7 @@ jobs:
               if [ ${cnt} = "0" ] ; then
                 cnt="1"
               else
-                curl -X POST https://content.dropboxapi.com/2/files/upload \
+                curl -s -X POST https://content.dropboxapi.com/2/files/upload \
                   --header "Authorization: Bearer ${{ env.DTOKEN }}" \
                   --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/test2/$i\",\"mode\":\"overwrite\"}" \
                   --header  "Content-Type: application/octet-stream" \
@@ -120,7 +122,7 @@ jobs:
             if [ ${cnt} = "0" ] ; then
               cnt="1"
             else
-              curl -X POST https://content.dropboxapi.com/2/files/upload \
+              curl -s -X POST https://content.dropboxapi.com/2/files/upload \
                 --header "Authorization: Bearer ${{ env.DTOKEN }}" \
                 --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/coop_results/$i\",\"mode\":\"overwrite\"}" \
                 --header  "Content-Type: application/octet-stream" \
