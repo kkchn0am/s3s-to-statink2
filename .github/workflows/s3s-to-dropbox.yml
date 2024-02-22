@@ -77,6 +77,11 @@ jobs:
           mkdir s3s/exports/results/vs_xmatch
           mkdir s3s/exports/results/vs_regular
 
+          echo lschk
+          ls -1 s3s/exports/results
+          echo lschk
+          ls -F1 s3s/exports/results
+
           for i in $(ls -1 s3s/exports/results | grep -v /)
           do
             if [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode") = "BANKARA" ] ; then
