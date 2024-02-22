@@ -24,7 +24,6 @@ jobs:
       
     name: Splatoon3 Send DropBox
     steps:
-      - uses: actions/checkout@v3
       - name: Get DropBox Token
         run: |
           DTOKEN=$(curl -s https://api.dropbox.com/oauth2/token \
@@ -84,6 +83,7 @@ jobs:
               mv s3s/exports/results/$i s3s/exports/results/vs_bankara
             fi
           done
+          echo "↓ls"
           ls s3s/exports/results/vs_bankara
 #            elif [ $(cat s3s/exports/results/$i | jq -r ".data.vsHistoryDetail.vsMode.mode")  = "LEAGUE" ] ; then
 #              mv s3s/exports/results/$i s3s/exports/results/vs_event
