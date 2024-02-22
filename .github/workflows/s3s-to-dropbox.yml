@@ -5,9 +5,6 @@ on:
     - cron: '0 0-23/3 * * *'
   workflow_dispatch:
   
-permissions:
-  contents: write
-  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,7 +21,7 @@ jobs:
       
     name: Splatoon3 Send DropBox
     steps:
-      - name: Get DropBox Token
+      - name: Get DropBox Token # DropBoxトークンの取得
         run: |
           DTOKEN=$(curl -s https://api.dropbox.com/oauth2/token \
           -d grant_type=refresh_token \
@@ -33,45 +30,45 @@ jobs:
           echo "::add-mask::$DTOKEN"
           echo "DTOKEN=$DTOKEN" >> $GITHUB_ENV
 
-      - name: Set up Python 3.11
+      - name: Set up Python 3.11 # Pythonのセットアップ
         uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
-      - name: Checkout frozenpandaman/s3s
+      - name: Checkout frozenpandaman/s3s # s3sをチェックアウト
         uses: actions/checkout@v4
         with:
           repository: 'frozenpandaman/s3s'
           path: s3s
 
-      - name: Generate config.txt
+      - name: Generate config.txt # config.txtの作成
         working-directory: s3s
         run: |
           echo '{"api_key": "${{ env.API_KEY }}", "acc_loc": "${{ env.ACC_LOC }}", "gtoken": "${{ env.GTOKEN }}", "bullettoken": "${{ env.BULLETTOKEN }}", "session_token": "${{ env.SESSION_TOKEN }}", "f_gen": "${{ env.F_GEN }}" }' > config.txt
           cat config.txt
           
-      - name: Install s3s requirements
+      - name: Install s3s requirements # s3sのパッケージリストを取得
         working-directory: s3s
         run: |
           pip install -r requirements.txt
           
-      - name: Run s3s
+      - name: Run s3s # s3sの実行
         working-directory: s3s
         run: |
           python3 s3s.py -o
 
-      - name: Masking FileName
+      - name: Masking FileName # ファイル名のマスキング
         run: |
-          for i in $(ls -F1 s3s/exports/coop_results | grep -v /)
-          do
-            echo "::add-mask::$i"
-          done
           for i in $(ls -F1 s3s/exports/results | grep -v /)
           do
             echo "::add-mask::$i"
           done
+          for i in $(ls -F1 s3s/exports/coop_results | grep -v /)
+          do
+            echo "::add-mask::$i"
+          done
 
-      - name: CreateFolder and Move battle_results
+      - name: CreateFolder and Move battle_results # battle_resultsの整理
         run: |
           mkdir s3s/exports/results/vs_bankara
           mkdir s3s/exports/results/vs_event
@@ -94,9 +91,9 @@ jobs:
             fi
           done
           
-      - name: battle_results Send to DropBox
+      - name: battle_results Send to DropBox # battle_resultsをDropBoxへ転送
         run: |
-          for f in vs_regular
+          for f in vs_bankara vs_event vs_private vs_xmatch vs_regular
           do
             cnt="0"
             for i in $(ls -F1 s3s/exports/results/$f | grep -v /)
@@ -104,7 +101,7 @@ jobs:
               if [ ${cnt} = "0" ] ; then
                 cnt="1"
               else
-                curl -s -X POST https://content.dropboxapi.com/2/files/upload \
+                curl -s -o /dev/null -X POST https://content.dropboxapi.com/2/files/upload \
                   --header "Authorization: Bearer ${{ env.DTOKEN }}" \
                   --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/results/$i\",\"mode\":\"overwrite\"}" \
                   --header  "Content-Type: application/octet-stream" \
@@ -113,16 +110,15 @@ jobs:
             done
           done
           
-      - name: coop_results Send to DropBox
+      - name: coop_results Send to DropBox # coop_resultsをDropBoxへ転送
         run: |
-          ls -lR s3s/exports/coop_results
           cnt="0"
           for i in $(ls -F1 s3s/exports/coop_results | grep -v /)
           do
             if [ ${cnt} = "0" ] ; then
               cnt="1"
             else
-              curl -s -X POST https://content.dropboxapi.com/2/files/upload \
+              curl -s -o /dev/null -X POST https://content.dropboxapi.com/2/files/upload \
                 --header "Authorization: Bearer ${{ env.DTOKEN }}" \
                 --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/coop_results/$i\",\"mode\":\"overwrite\"}" \
                 --header  "Content-Type: application/octet-stream" \
