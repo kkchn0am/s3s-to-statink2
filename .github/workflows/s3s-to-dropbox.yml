@@ -34,7 +34,7 @@ jobs:
           echo "DTOKEN=$DTOKEN" >> $GITHUB_ENV
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
@@ -91,6 +91,7 @@ jobs:
               mv s3s/exports/results/$i s3s/exports/results/vs_regular
             fi
           done
+          ls -lR s3s/exports/results
           
       - name: battle_results Send to DropBox
         run: |
