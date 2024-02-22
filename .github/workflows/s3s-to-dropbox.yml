@@ -103,7 +103,7 @@ jobs:
               else
                 curl -s -o /dev/null -X POST https://content.dropboxapi.com/2/files/upload \
                   --header "Authorization: Bearer ${{ env.DTOKEN }}" \
-                  --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/test2/$i\",\"mode\":\"overwrite\"}" \
+                  --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/results/$i\",\"mode\":\"overwrite\"}" \
                   --header  "Content-Type: application/octet-stream" \
                   --data-binary @s3s/exports/results/$f/$i
               fi
@@ -120,7 +120,7 @@ jobs:
             else
               curl -s -o /dev/null -X POST https://content.dropboxapi.com/2/files/upload \
                 --header "Authorization: Bearer ${{ env.DTOKEN }}" \
-                --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/test/$i\",\"mode\":\"overwrite\"}" \
+                --header "Dropbox-API-Arg: {\"path\":\"/Splatoon3/coop_results/$i\",\"mode\":\"overwrite\"}" \
                 --header  "Content-Type: application/octet-stream" \
                 --data-binary @s3s/exports/coop_results/$i
             fi
