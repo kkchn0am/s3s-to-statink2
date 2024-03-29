@@ -1,8 +1,8 @@
 name: Splatoon3 Send DropBox
 
 on:
-  schedule:
-    - cron: '0 0-23/3 * * *'
+  #schedule:
+    #- cron: '0 0-23/3 * * *'
   workflow_dispatch:
   
 jobs:
